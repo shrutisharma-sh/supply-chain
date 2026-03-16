@@ -12,4 +12,6 @@ public interface SupplierProfileRepository extends JpaRepository<SupplierProfile
     Optional<SupplierProfile> findByCompanyName(String companyName);
     List<SupplierProfile> findByName(String name);
 
+    Optional<SupplierProfile> findByUserId(Long userId);
+
 }

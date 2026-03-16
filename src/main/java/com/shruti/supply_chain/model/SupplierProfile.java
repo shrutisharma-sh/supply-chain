@@ -36,6 +36,10 @@ public class SupplierProfile {
 
     private LocalDateTime updatedAt;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
@@ -49,4 +53,6 @@ public class SupplierProfile {
     @JsonIgnore
     @OneToMany(mappedBy = "supplier")
     private List<SupplierProduct> supplierProducts;
+
+
 }
