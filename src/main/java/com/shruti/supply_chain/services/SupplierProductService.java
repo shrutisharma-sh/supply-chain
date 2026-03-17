@@ -16,4 +16,9 @@ public interface SupplierProductService {
     List<SupplierProductResponse> getSuppliersByProduct(Long productId);
 
     void deleteSupplierProduct(Long id);
+
+    void approveSupplierProduct(Long id);
+
+    void rejectSupplierProduct(Long id);
+    List<SupplierProductResponse> getPendingProducts();
 }

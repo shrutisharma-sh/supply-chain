@@ -2,9 +2,8 @@ package com.shruti.supply_chain.services;
 
 import com.shruti.supply_chain.dto.ProductRequest;
 import com.shruti.supply_chain.dto.ProductResponse;
-import com.shruti.supply_chain.model.Category;
-import com.shruti.supply_chain.model.Product;
-import com.shruti.supply_chain.model.ProductStatus;
+import com.shruti.supply_chain.dto.SupplierProductResponse;
+import com.shruti.supply_chain.model.*;
 import com.shruti.supply_chain.repository.CategoryRepository;
 import com.shruti.supply_chain.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +17,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+
 
     @Override
     public ProductResponse createProduct(ProductRequest request) {
@@ -112,6 +112,8 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
+
+
     private ProductResponse mapToResponse(Product product) {
 
         return ProductResponse.builder()
@@ -125,4 +127,6 @@ public class ProductServiceImpl implements ProductService {
                 .categoryName(product.getCategory().getName())
                 .build();
     }
+
+
 }

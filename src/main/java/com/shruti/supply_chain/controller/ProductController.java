@@ -2,9 +2,11 @@ package com.shruti.supply_chain.controller;
 
 import com.shruti.supply_chain.dto.ProductRequest;
 import com.shruti.supply_chain.dto.ProductResponse;
+import com.shruti.supply_chain.dto.ProductStatusUpdateRequest;
 import com.shruti.supply_chain.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,6 +45,16 @@ public class ProductController {
 
         ProductResponse product = productService.getProductById(id);
         return ResponseEntity.ok(product);
+    }
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @PutMapping("/manager/products/{id}/status")
+    public ResponseEntity<String> updateProductStatus(
+            @PathVariable Long id,
+            @RequestBody ProductStatusUpdateRequest request) {
+
+        productService.updateProductStatus(id, request.getStatus());
+        return ResponseEntity.ok("Product status updated successfully");
     }
 
 

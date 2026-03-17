@@ -44,8 +44,14 @@ public class SupplierProduct {
 
     private LocalDateTime createdAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ApprovalStatus approvalStatus;
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
+        this.approvalStatus = ApprovalStatus.PENDING;
     }
+
 }

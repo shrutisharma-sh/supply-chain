@@ -2,6 +2,7 @@ package com.shruti.supply_chain.services;
 
 import com.shruti.supply_chain.dto.SupplierProductRequest;
 import com.shruti.supply_chain.dto.SupplierProductResponse;
+import com.shruti.supply_chain.model.ApprovalStatus;
 import com.shruti.supply_chain.model.Product;
 import com.shruti.supply_chain.model.SupplierProduct;
 import com.shruti.supply_chain.model.SupplierProfile;
@@ -96,5 +97,31 @@ public class SupplierProductServiceImpl implements SupplierProductService {
                 .minimumOrderQuantity(sp.getMinimumOrderQuantity())
                 .leadTimeDays(sp.getLeadTimeDays())
                 .build();
+    }
+    @Override
+    public List<SupplierProductResponse> getPendingProducts() {
+        return supplierProductRepository
+                .findByApprovalStatus(ApprovalStatus.PENDING)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public void approveSupplierProduct(Long id) {
+        SupplierProduct sp = supplierProductRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Supplier product not found"));
+
+        sp.setApprovalStatus(ApprovalStatus.APPROVED);
+        supplierProductRepository.save(sp);
+    }
+
+    @Override
+    public void rejectSupplierProduct(Long id) {
+        SupplierProduct sp = supplierProductRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Supplier product not found"));
+
+        sp.setApprovalStatus(ApprovalStatus.REJECTED);
+        supplierProductRepository.save(sp);
     }
 }

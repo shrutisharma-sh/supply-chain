@@ -4,9 +4,13 @@ package com.shruti.supply_chain.services;
 import com.shruti.supply_chain.dto.AuthResponse;
 import com.shruti.supply_chain.dto.LoginRequest;
 import com.shruti.supply_chain.dto.RegisterRequest;
+import com.shruti.supply_chain.model.Role;
+import com.shruti.supply_chain.model.SupplierProfile;
 import com.shruti.supply_chain.model.User;
+import com.shruti.supply_chain.repository.SupplierProfileRepository;
 import com.shruti.supply_chain.repository.UserRepository;
 import com.shruti.supply_chain.security.JwtUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,8 +25,9 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+    private final SupplierProfileRepository supplierProfileRepository;
 
-    // REGISTER
+    @Transactional
     public AuthResponse register(RegisterRequest request) {
 
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -36,9 +41,26 @@ public class AuthService {
                 .role(request.getRole())
                 .build();
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);  //
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+
+        if (savedUser.getRole() == Role.SUPPLIER) {
+
+            if (request.getCompanyName() == null || request.getCompanyName().isBlank()) {
+                throw new RuntimeException("Company name is required for supplier");
+            }
+            SupplierProfile supplierProfile = SupplierProfile.builder()
+                    .user(savedUser)
+                    .companyName(request.getCompanyName())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .build();
+
+            supplierProfileRepository.save(supplierProfile);
+        }
+
+        String token = jwtUtil.generateToken(savedUser.getEmail(), savedUser.getRole().name());
+
 
         return new AuthResponse(token);
     }
