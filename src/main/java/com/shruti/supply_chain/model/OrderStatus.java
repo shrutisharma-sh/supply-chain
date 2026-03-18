@@ -3,8 +3,10 @@ package com.shruti.supply_chain.model;
 public enum OrderStatus {
 
     PLACED,
-    CONFIRMED,
+    ACCEPTED,
     SHIPPED,
     DELIVERED,
-    CANCELLED
+    REJECTED;
+
+
 }

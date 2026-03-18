@@ -1,9 +1,13 @@
 package com.shruti.supply_chain.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.function.Supplier;
 
 @Entity
 @Table(name = "orders")
@@ -17,15 +21,17 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-
     @ManyToOne
     @JoinColumn(name = "supplier_product_id", nullable = false)
     private SupplierProduct supplierProduct;
+
+    @ManyToOne
+    @JoinColumn(name = "supplier_id", nullable = false)
+    private SupplierProfile supplier;
 
     private Integer quantity;
 
@@ -35,6 +41,10 @@ public class Order {
     private OrderStatus status;
 
     private LocalDateTime createdAt;
+
+    private LocalDateTime acceptedAt;
+    private LocalDateTime shippedAt;
+    private LocalDateTime deliveredAt;
 
     @PrePersist
     public void prePersist() {
