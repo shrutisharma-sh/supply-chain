@@ -17,13 +17,16 @@ public class SupplierOrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public List<OrderResponse> getSupplierOrders(Authentication authentication) {
 
+    public List<OrderResponse> getSupplierOrders(
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String status) {
 
         String email = authentication.getName();
 
-
-        return orderService.getOrdersForSupplier(email);
+        return orderService.getOrdersForSupplier(email, page, size, status);
     }
 
     @PutMapping("/{orderId}/accept")

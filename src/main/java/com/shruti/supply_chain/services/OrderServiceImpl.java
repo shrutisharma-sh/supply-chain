@@ -8,11 +8,16 @@ import com.shruti.supply_chain.repository.SupplierProductRepository;
 import com.shruti.supply_chain.repository.SupplierProfileRepository;
 import com.shruti.supply_chain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.shruti.supply_chain.model.OrderStatus;
+
+
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @RequiredArgsConstructor
@@ -63,12 +68,27 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> getOrdersForSupplier(String email) {
+    public List<OrderResponse> getOrdersForSupplier(String email, int page, int size, String status) {
 
         SupplierProfile supplier = supplierProfileRepository.findByUserEmail(email)
                 .orElseThrow(() -> new RuntimeException("Supplier not found"));
 
-        return orderRepository.findBySupplierId(supplier.getId())
+        Pageable pageable = PageRequest.of(page, size);
+
+
+        if (status != null) {
+            OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase());
+
+            return orderRepository
+                    .findBySupplierIdAndStatus(supplier.getId(), orderStatus, pageable)
+                    .stream()
+                    .map(this::mapToResponse)
+                    .toList();
+        }
+
+
+        return orderRepository
+                .findBySupplierId(supplier.getId(), pageable)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();

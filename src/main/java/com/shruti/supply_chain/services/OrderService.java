@@ -11,7 +11,7 @@ public interface OrderService {
 
     List<OrderResponse> getMyOrders(Long userId);
 
-    public List<OrderResponse> getOrdersForSupplier(String email);
+    public List<OrderResponse> getOrdersForSupplier(String email, int page, int size, String status);
 
     OrderResponse updateOrderStatus(Long orderId, OrderStatus status, String email);
 }
